@@ -22,7 +22,16 @@ namespace PL
             materia.Costo = decimal.Parse(Console.ReadLine());
 
 
-            BL.Materia.Add(materia);
+            ML.Result result = BL.Materia.Add(materia);
+
+            if (result.Correct)
+            {
+                Console.WriteLine("Se ha registrado la materia");
+            }
+            else
+            {
+                Console.WriteLine("No se ha podido registrar la materia" + result.ErrorMessage);
+            }
 
         }
 
