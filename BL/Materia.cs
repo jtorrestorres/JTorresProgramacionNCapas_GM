@@ -238,6 +238,59 @@ namespace BL
             }
             return result;
         }
-     
+
+        public static ML.Result GetByIdSP(int IdMateria)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (SqlConnection context = new SqlConnection(DL.Conexion.GetConnectionString()))
+                {
+                    string query = "MateriaGetById";
+
+                    using (SqlCommand cmd = new SqlCommand())
+                    {
+                        cmd.CommandText = query;
+                        cmd.Connection = context;
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        SqlParameter[] collection = new SqlParameter[1];
+
+                        collection[0] = new SqlParameter("IdMateria", SqlDbType.Int);
+                        collection[0].Value = IdMateria;
+
+                        cmd.Parameters.AddRange(collection);
+                        cmd.Connection.Open();
+
+                        DataTable tablaMateria = new DataTable();
+
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+
+                        da.Fill(tablaMateria);
+
+                        if (tablaMateria.Rows.Count > 0)
+                        {
+                            DataRow row = tablaMateria.Rows[0];
+
+                            ML.Materia materia = new ML.Materia();
+                            materia.Nombre = row[0].ToString();
+
+                            result.Object = materia;
+                            result.Correct = true;
+                        }
+                        else
+                        {
+                            result.Correct = false;
+                        }
+                    }
+                }
+            }
+            catch ()
+            {
+
+            }
+            return result;
+        }
+
     }
 }

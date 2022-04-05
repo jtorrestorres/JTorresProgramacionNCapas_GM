@@ -84,5 +84,17 @@ namespace PL
                 Console.WriteLine("Ocurrio un error al realizar la consulta " + result.ErrorMessage);
             }
         }
+
+        public static void GetById()
+        {
+            Console.WriteLine("Ingrese el Id de la Materia");
+            ML.Result result = BL.Materia.GetByIdSP(int.Parse(Console.ReadLine()));
+
+            ML.Materia materia = ((ML.Materia)result.Object);
+
+            Console.WriteLine("Nombre: " + materia.Nombre);
+            Console.WriteLine("Creditos: " + materia.Creditos);
+            Console.WriteLine("Costo: " + materia.Costo);
+        }
     }
 }
