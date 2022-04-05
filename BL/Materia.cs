@@ -188,5 +188,56 @@ namespace BL
             }
             return result;
         }
+
+       public static ML.Result GetAllSP()
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using(SqlConnection context = new SqlConnection(DL.Conexion.GetConnection()))
+                {
+                    string query = "MateriaGetAll";
+                    using(SqlCommand cmd = new SqlCommand())
+                    {
+                        cmd.Connection = context;
+                        cmd.CommandText = query;
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        DataTable tableMateria = new DataTable();
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+
+                        da.Fill(tableMateria);
+
+                        if(tableMateria.Rows.Count > 0)
+                        {
+                            result.Objects = new List<object>();
+                            foreach(DataRow row in tableMateria.Rows)
+                            {
+                                ML.Materia materia = new ML.Materia();
+                                materia.IdMateria = int.Parse(row[0].ToString());
+                                materia.Nombre = row[1].ToString();
+                                materia.Creditos = Byte.Parse(row[2].ToString());
+                                materia.Costo =Decimal.Parse(row[3].ToString());
+
+                                result.Objects.Add(materia);
+
+                            }
+                            result.Correct = true;
+                        }
+                        else
+                        {
+                            result.Correct = false;
+                        }                       
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct=false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+     
     }
 }

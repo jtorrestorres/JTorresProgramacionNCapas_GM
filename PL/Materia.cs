@@ -64,7 +64,25 @@ namespace PL
             }
         }
 
-
-
+        public static void GetAll()
+        {
+            ML.Result result = BL.Materia.GetAllSP();
+            if(result.Correct)
+            {
+                foreach(ML.Materia materia in result.Objects)
+                {
+                    Console.WriteLine("IdMateria" + materia.IdMateria);
+                    Console.WriteLine("Nombre" + materia.Nombre);
+                    Console.WriteLine("Creditos" + materia.Creditos);
+                    Console.WriteLine("Costo" + materia.Costo);
+                    Console.WriteLine("----------------------------------");
+                    Console.WriteLine();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Ocurrio un error al realizar la consulta " + result.ErrorMessage);
+            }
+        }
     }
 }
