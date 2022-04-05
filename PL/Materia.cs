@@ -22,7 +22,8 @@ namespace PL
             materia.Costo = decimal.Parse(Console.ReadLine());
 
 
-            ML.Result result = BL.Materia.Add(materia);
+            //ML.Result result = BL.Materia.Add(materia);
+            ML.Result result = BL.Materia.AddSP(materia);
 
             if (result.Correct)
             {
@@ -34,6 +35,36 @@ namespace PL
             }
 
         }
+
+        public static void Update()
+        {
+            ML.Materia materia = new ML.Materia();
+
+            Console.WriteLine("Ingrese el id de la materia");
+            materia.IdMateria = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Ingrese el nombre");
+            materia.Nombre = Console.ReadLine();
+
+            Console.WriteLine("Ingrese los creditos");
+            materia.Creditos = Byte.Parse(Console.ReadLine());
+
+            Console.WriteLine("Ingrese el costo");
+            materia.Costo = Decimal.Parse(Console.ReadLine());
+
+            ML.Result result = BL.Materia.Update(materia);
+
+            if (result.Correct)
+            {
+                Console.WriteLine("El registro se actulizo correctamente");
+            }
+            else
+            {
+                Console.WriteLine("Ocurrio un error al actulizar la informacion " + result.ErrorMessage);
+            }
+        }
+
+
 
     }
 }

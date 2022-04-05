@@ -46,7 +46,7 @@ namespace BL
 
                     collection[0] = new SqlParameter("@Nombre", SqlDbType.VarChar);
                     collection[0].Value = materia.Nombre;
-                    
+
                     collection[1] = new SqlParameter("@Creditos", SqlDbType.TinyInt);
                     collection[1].Value = materia.Creditos;
 
@@ -59,13 +59,13 @@ namespace BL
 
                     int RowsAffected = cmd.ExecuteNonQuery();
 
-                    if(RowsAffected > 0)
+                    if (RowsAffected > 0)
                     {
                         result.Correct = true;
                     }
                     else
                     {
-                        result.Correct= false;
+                        result.Correct = false;
                     }
                 }
             }
@@ -76,6 +76,116 @@ namespace BL
                 result.Ex = ex;
             }
 
+            return result;
+        }
+
+        public static ML.Result Update(ML.Materia materia)
+        {
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (SqlConnection context = new SqlConnection(DL.Conexion.GetConnection()))
+                {
+                    string query = "UPDATE [Materia] SET[Nombre] = @Nombre,[Costo] = @Costo,[Creditos] = @Creditos WHERE IdMateria = @IdMateria";
+                    using (SqlCommand cmd = new SqlCommand())
+                    {
+                        cmd.Connection = context;
+                        cmd.CommandText = query;
+
+                        SqlParameter[] collection = new SqlParameter[4];
+
+                        collection[0] = new SqlParameter("IdMateria", SqlDbType.Int);
+                        collection[0].Value = materia.IdMateria;
+
+                        collection[1] = new SqlParameter("Nombre", SqlDbType.VarChar);
+                        collection[1].Value = materia.Nombre;
+
+                        collection[2] = new SqlParameter("Creditos", SqlDbType.TinyInt);
+                        collection[2].Value = materia.Creditos;
+
+                        collection[3] = new SqlParameter("Costo", SqlDbType.Decimal);
+                        collection[3].Value = materia.Costo;
+
+                        cmd.Parameters.AddRange(collection);
+
+                        cmd.Connection.Open();
+
+                        int RowsAffected = cmd.ExecuteNonQuery();
+
+                        cmd.Connection.Close();
+
+                        if (RowsAffected > 0)
+                        {
+                            result.Correct = true;
+                        }
+                        else
+                        {
+                            result.Correct = false;
+                        }
+
+
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+
+        public static ML.Result AddSP(ML.Materia materia)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (SqlConnection context = new SqlConnection(DL.Conexion.GetConnection()))
+                {
+                    string query = "MateriaAdd"; //Nombre SP
+                    using (SqlCommand cmd = new SqlCommand())
+                    {
+                        cmd.Connection = context;
+                        cmd.CommandText = query;
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        SqlParameter[] collection = new SqlParameter[3];
+
+                        collection[0] = new SqlParameter("Nombre", SqlDbType.VarChar);
+                        collection[0].Value = materia.Nombre;
+
+
+                        collection[1] = new SqlParameter("Creditos", SqlDbType.TinyInt);
+                        collection[1].Value = materia.Creditos;
+
+
+                        collection[2] = new SqlParameter("Costo", SqlDbType.Decimal);
+                        collection[2].Value = materia.Costo;
+
+                        cmd.Parameters.AddRange(collection);
+                        cmd.Connection.Open();
+                        int RowsAffected = cmd.ExecuteNonQuery();
+
+                        if (RowsAffected > 0)
+                        {
+                            result.Correct = true;
+                        }
+
+                        else
+                        {
+                            result.Correct = false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
             return result;
         }
     }
