@@ -12,7 +12,7 @@ namespace PL
         {
             ML.Materia materia = new ML.Materia();
 
-            Console.WriteLine("Ingrese el nombre de la materia");
+            Console.WriteLine("Ingrese el nombre de la materia que desee ingresar");
             materia.Nombre = Console.ReadLine();
 
             Console.WriteLine("Ingrese los creditos para la materia");
