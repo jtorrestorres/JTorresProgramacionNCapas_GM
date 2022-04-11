@@ -42,7 +42,7 @@ namespace BL
                     cmd.CommandText = query;
                     cmd.Connection = context;
 
-                    SqlParameter[] collection = new SqlParameter[3];
+                    SqlParameter[] collection = new SqlParameter[4];
 
                     collection[0] = new SqlParameter("@Nombre", SqlDbType.VarChar);
                     collection[0].Value = materia.Nombre;
@@ -52,6 +52,9 @@ namespace BL
 
                     collection[2] = new SqlParameter("@Costo", SqlDbType.Decimal);
                     collection[2].Value = materia.Costo;
+
+                    collection[3] = new SqlParameter("IdSemestre", SqlDbType.Int);
+                    collection[3].Value = materia.Semestre.IdSemestre;
 
                     cmd.Parameters.AddRange(collection);
 
@@ -107,6 +110,9 @@ namespace BL
                         collection[3] = new SqlParameter("Costo", SqlDbType.Decimal);
                         collection[3].Value = materia.Costo;
 
+                        collection[3] = new SqlParameter("IdSemestre", SqlDbType.Int);
+                        collection[3].Value = materia.Semestre.IdSemestre;
+
                         cmd.Parameters.AddRange(collection);
 
                         cmd.Connection.Open();
@@ -152,7 +158,7 @@ namespace BL
                         cmd.CommandText = query;
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        SqlParameter[] collection = new SqlParameter[3];
+                        SqlParameter[] collection = new SqlParameter[4];
 
                         collection[0] = new SqlParameter("Nombre", SqlDbType.VarChar);
                         collection[0].Value = materia.Nombre;
@@ -164,6 +170,9 @@ namespace BL
 
                         collection[2] = new SqlParameter("Costo", SqlDbType.Decimal);
                         collection[2].Value = materia.Costo;
+
+                        collection[3] = new SqlParameter("IdSemestre", SqlDbType.Int);
+                        collection[3].Value = materia.Semestre.IdSemestre;
 
                         cmd.Parameters.AddRange(collection);
                         cmd.Connection.Open();
@@ -218,6 +227,7 @@ namespace BL
                                 materia.Nombre = row[1].ToString();
                                 materia.Creditos = Byte.Parse(row[2].ToString());
                                 materia.Costo =Decimal.Parse(row[3].ToString());
+                                materia.Semestre.IdSemestre = int.Parse(row[4].ToString());
 
                                 result.Objects.Add(materia);
 
@@ -244,7 +254,7 @@ namespace BL
             ML.Result result = new ML.Result();
             try
             {
-                using (SqlConnection context = new SqlConnection(DL.Conexion.GetConnectionString()))
+                using (SqlConnection context = new SqlConnection(DL.Conexion.GetConnection()))
                 {
                     string query = "MateriaGetById";
 
@@ -273,7 +283,12 @@ namespace BL
                             DataRow row = tablaMateria.Rows[0];
 
                             ML.Materia materia = new ML.Materia();
-                            materia.Nombre = row[0].ToString();
+                            materia.IdMateria = int.Parse(row[0].ToString());
+                            materia.Nombre = row[1].ToString();
+                            materia.Creditos = Byte.Parse(row[2].ToString());
+                            materia.Costo = Decimal.Parse(row[3].ToString());
+                            materia.Semestre.IdSemestre = int.Parse(row[4].ToString());
+
 
                             result.Object = materia;
                             result.Correct = true;
@@ -285,9 +300,74 @@ namespace BL
                     }
                 }
             }
-            catch ()
+            catch (Exception ex)
             {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
 
+        public static ML.Result AddEF(ML.Materia materia)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using(DL_EF.AGarciaGMEntities context = new DL_EF.AGarciaGMEntities())
+                {
+                    var query = context.MateriaAdd(materia.Nombre, materia.Creditos, materia.Costo, materia.Semestre.IdSemestre);
+                    if(query > 0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                result.Correct=false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+        public static ML.Result GetAllEF()
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AGarciaGMEntities context = new DL_EF.AGarciaGMEntities())
+                {
+                    var query = context.MateriaGetAll().ToList();
+
+                    result.Objects = new List<object>();
+
+                    if(query != null)
+                    {
+                        foreach(var obj in query)
+                        {
+                            ML.Materia materia = new ML.Materia();
+                            materia.Nombre = obj.Nombre;
+                            materia.Creditos = obj.Creditos.Value;
+                            materia.Costo = obj.Costo.Value;
+
+                            materia.Semestre = new ML.Semestre();
+                            materia.Semestre.IdSemestre = obj.IdSemestre.Value;
+
+                            result.Objects.Add(materia);
+                        }
+                        result.Correct = true;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;   
             }
             return result;
         }

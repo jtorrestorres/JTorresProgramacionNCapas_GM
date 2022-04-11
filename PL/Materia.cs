@@ -21,9 +21,13 @@ namespace PL
             Console.WriteLine("Ingrese el costo de la materia");
             materia.Costo = decimal.Parse(Console.ReadLine());
 
+            materia.Semestre = new ML.Semestre();
+            Console.WriteLine("Ingrese el semestre: ");
+            materia.Semestre.IdSemestre = int.Parse(Console.ReadLine());
 
             //ML.Result result = BL.Materia.Add(materia);
-            ML.Result result = BL.Materia.AddSP(materia);
+            //ML.Result result = BL.Materia.AddSP(materia);
+            ML.Result result = BL.Materia.AddEF(materia);
 
             if (result.Correct)
             {
@@ -52,6 +56,10 @@ namespace PL
             Console.WriteLine("Ingrese el costo");
             materia.Costo = Decimal.Parse(Console.ReadLine());
 
+            materia.Semestre = new ML.Semestre();
+            Console.WriteLine("Ingrese el semestre: ");
+            materia.Semestre.IdSemestre = int.Parse(Console.ReadLine());
+
             ML.Result result = BL.Materia.Update(materia);
 
             if (result.Correct)
@@ -66,7 +74,7 @@ namespace PL
 
         public static void GetAll()
         {
-            ML.Result result = BL.Materia.GetAllSP();
+            ML.Result result = BL.Materia.GetAllEF();
             if(result.Correct)
             {
                 foreach(ML.Materia materia in result.Objects)
@@ -75,6 +83,7 @@ namespace PL
                     Console.WriteLine("Nombre" + materia.Nombre);
                     Console.WriteLine("Creditos" + materia.Creditos);
                     Console.WriteLine("Costo" + materia.Costo);
+                    Console.WriteLine("IdSemestre" + materia.Semestre.IdSemestre);
                     Console.WriteLine("----------------------------------");
                     Console.WriteLine();
                 }
@@ -95,6 +104,7 @@ namespace PL
             Console.WriteLine("Nombre: " + materia.Nombre);
             Console.WriteLine("Creditos: " + materia.Creditos);
             Console.WriteLine("Costo: " + materia.Costo);
+            Console.WriteLine("IdSemestre" + materia.Semestre.IdSemestre);
         }
     }
 }
