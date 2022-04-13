@@ -312,6 +312,7 @@ namespace BL
             return result;
         }
 
+        //EntityFramwork
         public static ML.Result AddEF(ML.Materia materia)
         {
             ML.Result result = new ML.Result();
@@ -355,6 +356,7 @@ namespace BL
                         foreach(var obj in query)
                         {
                             ML.Materia materia = new ML.Materia();
+                            materia.IdMateria = obj.IdMateria;
                             materia.Nombre = obj.Nombre;
                             materia.Creditos = obj.Creditos.Value;
                             materia.Costo = obj.Costo.Value;
@@ -376,6 +378,78 @@ namespace BL
             }
             return result;
         }
+        public static ML.Result UpdateEF(ML.Materia materia)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using(DL_EF.AGarciaGMEntities context = new DL_EF.AGarciaGMEntities())
+                {
+                    var query = context.MateriaUpdate(materia.IdMateria, materia.Nombre, materia.Costo, materia.Creditos);
+
+                    if(query > 0)
+                    {
+                        result.Correct=true;
+                    }
+                    else
+                    {
+                        result.Correct=false;
+                    }
+                    result.Correct = true;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                result.Correct = true;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+            return result;
+
+        }
+        public static ML.Result GetByIdEF(int IdMateria)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AGarciaGMEntities context = new DL_EF.AGarciaGMEntities())
+                {
+                    var obMateria = context.MateriaGetById(IdMateria).FirstOrDefault();
+                    result.Objects = new List<object>();
+
+                    if (obMateria != null)
+                    {
+                        ML.Materia materia= new ML.Materia();
+                        materia.IdMateria= obMateria.IdMateria;
+                        materia.Nombre = obMateria.Nombre;
+                        materia.Creditos = obMateria.Creditos.Value;
+                        materia.Costo = obMateria.Costo.Value;
+                        materia.Semestre = new ML.Semestre();
+                        materia.Semestre.IdSemestre = obMateria.IdSemestre.Value;
+                        
+
+                        result.Object = materia;
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "Ocurrio un error al realizar la consulta";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+
+            return result;
+        }
+
+
 
 
         //LINQ

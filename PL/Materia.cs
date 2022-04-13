@@ -98,7 +98,7 @@ namespace PL
         public static void GetById()
         {
             Console.WriteLine("Ingrese el Id de la Materia");
-            ML.Result result = BL.Materia.GetByIdSP(int.Parse(Console.ReadLine()));
+            ML.Result result = BL.Materia.GetByIdEF(int.Parse(Console.ReadLine()));
 
             ML.Materia materia = ((ML.Materia)result.Object);
 
