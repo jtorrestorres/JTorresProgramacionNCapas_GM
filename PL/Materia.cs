@@ -28,7 +28,9 @@ namespace PL
 
             //ML.Result result = BL.Materia.Add(materia);
             //ML.Result result = BL.Materia.AddSP(materia);
-            ML.Result result = BL.Materia.AddEF(materia);
+            //ML.Result result = BL.Materia.AddEF(materia);
+            ML.Result result = BL.Materia.AddLINQ(materia);
+
 
             if (result.Correct)
             {
@@ -57,11 +59,8 @@ namespace PL
             Console.WriteLine("Ingrese el costo");
             materia.Costo = Decimal.Parse(Console.ReadLine());
 
-            materia.Semestre = new ML.Semestre();
-            Console.WriteLine("Ingrese el semestre: ");
-            materia.Semestre.IdSemestre = int.Parse(Console.ReadLine());
-
             ML.Result result = BL.Materia.Update(materia);
+            //ML.Result result = BL.Materia.UpdateLINQ(materia);
 
             if (result.Correct)
             {
@@ -75,8 +74,9 @@ namespace PL
 
         public static void GetAll()
         {
-            ML.Result result = BL.Materia.GetAllEF();
-            if(result.Correct)
+            //ML.Result result = BL.Materia.GetAllEF();
+            ML.Result result = BL.Materia.GetAllLINQ();
+            if (result.Correct)
             {
                 foreach(ML.Materia materia in result.Objects)
                 {

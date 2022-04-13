@@ -13,5 +13,6 @@ namespace ML
         public byte Creditos { get; set; }
         public decimal Costo { get; set; }
         public ML.Semestre Semestre { get; set; }
+        public List<object> Materias { get; set; }
     }
 }

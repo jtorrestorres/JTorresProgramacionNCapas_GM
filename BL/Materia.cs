@@ -27,6 +27,10 @@ namespace BL
         //        cmd.ExecuteNonQuery();
         //    }
         //}
+
+
+
+
         public static ML.Result Add(ML.Materia materia)
         {
             ML.Result result = new ML.Result();
@@ -315,8 +319,9 @@ namespace BL
             {
                 using(DL_EF.AGarciaGMEntities context = new DL_EF.AGarciaGMEntities())
                 {
-                    var query = context.MateriaAdd(materia.Nombre, materia.Creditos, materia.Costo, materia.Semestre.IdSemestre);
-                    if(query > 0)
+                    var query = context.MateriaAdd(materia.Nombre, materia.Creditos,materia.Costo, materia.Semestre.IdSemestre);
+
+                    if (query > 0)
                     {
                         result.Correct = true;
                     }
@@ -371,6 +376,103 @@ namespace BL
             }
             return result;
         }
+
+
+        //LINQ
+        public static ML.Result AddLINQ(ML.Materia materia)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AGarciaGMEntities context = new DL_EF.AGarciaGMEntities())
+                {
+
+                    //ML.Materia materiaObj = new ML.Materia();
+                    DL_EF.Materia materiaDL = new DL_EF.Materia();
+                    materiaDL.Nombre = materia.Nombre;
+                    materiaDL.Costo = materia.Costo;
+                    materiaDL.Creditos = materia.Creditos;
+                    materiaDL.IdSemestre = materia.Semestre.IdSemestre;
+
+
+                    var resultQuery=context.Materias.Add(materiaDL);
+
+                    if (resultQuery != null)
+                    {
+                        context.Materias.Add(resultQuery);
+                        context.SaveChanges();
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
+        //LINQ - ADD-UPDATE-DELETE-GET
+
+        //LINQ -Que nos permite utilizar SQL dentro de C#
+        public static ML.Result GetAllLINQ()
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AGarciaGMEntities context = new DL_EF.AGarciaGMEntities())
+                {
+
+                    var materiaList = (from materiaObj in context.Materias
+                                       select new
+                                       {
+                                         IdMaterias= materiaObj.IdMateria,
+                                         NombreMateria= materiaObj.Nombre,
+                                           materiaObj.Creditos,
+                                           materiaObj.Costo,
+                                           materiaObj.IdSemestre
+                                       }
+                                     ).ToList(); //FirstOrDefault
+
+                    if (materiaList != null)
+                    {
+                        result.Objects = new List<object>();
+
+
+                        foreach (var obj in materiaList)
+                        {
+                            ML.Materia materia = new ML.Materia();
+                            materia.IdMateria = obj.IdMaterias;
+                            materia.Nombre = obj.NombreMateria;
+                            materia.Creditos = obj.Creditos.Value;
+                            result.Objects.Add(materia);
+                        }
+
+                        result.Correct = true;
+
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
+
 
     }
 }
